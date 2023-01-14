@@ -38,7 +38,7 @@ def mesh_laplaceB(vertex_index, neighb_indices):
 
 ################################################################################
 # Open JSON file
-f = open(r'C:\Users\Prinz\Desktop\Projects\ISF\ReactionDiffusion\data\jsons\mesh_attributes.json')
+f = open(r'C:\Users\Prinz\Desktop\Projects\ISF\reaction_diffusion_repo\rd_existing_mesh\data\existing_mesh_data.json')
   
 # returns JSON object as a dictionary
 data = json.load(f)
@@ -99,7 +99,7 @@ visualize['seed'] = copy.deepcopy(nextB)
 # Main Loop
 count = 0
 jcount = 0
-for i in range(1000):
+for i in range(100):
     #for j in range(len(laplace_indices)):
     for j in laplace_indices:
         v_neighbors = neighbors[j]    #neighbors for laplace
@@ -156,7 +156,7 @@ visualize['results'] = results
 ################################################################################
 # test seed
 json_object = json.dumps(visualize, indent=4)
-with open("C:\\Users\\Prinz\\Desktop\\Projects\\ISF\\ReactionDiffusion\\data\\jsons\\visualize.json", "w") as outfile:
+with open(r'C:\Users\Prinz\Desktop\Projects\ISF\reaction_diffusion_repo\rd_existing_mesh\data\visualize.json', "w") as outfile:
     outfile.write(json_object)
 outfile.close()
 
