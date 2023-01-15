@@ -77,14 +77,11 @@ for i in seed_indices:
     meshB[i] = 1
     nextB[i] = 1
 
-visualize = {}
-visualize['seed'] = nextB[:]    #debug seed
-
 # ################################################################################
 # Main Loop
 count = 0
 jcount = 0
-for i in range(100):
+for i in range(10):
     #for j in range(len(laplace_indices)):
     for j in range(vertex_count):
         v_neighbors = conv_groups[j]    #neighbors for laplace
@@ -121,24 +118,25 @@ print(jcount)
 print('done calculating')
 
 # ################################################################################
+results = {}
+results['visA'] = visA
+results['visB'] = visB
 
-visualize['visA'] = visA
-visualize['visB'] = visB
-
-results = []
+# get diffusion results 
+vertex_values = []
 for i in range(len(nextA)):
     a = nextA[i]
     b = nextB[i]
     c = math.floor((a - b) * 255)
     c = constrain(c, 0, 255)
-    results.append(c)
+    vertex_values.append(c)
 
-visualize['results'] = results
+results['vertex_values'] = vertex_values
 
 ################################################################################
 # test seed
-json_object = json.dumps(visualize, indent=4)
-with open(r'C:\Users\Prinz\Desktop\Projects\ISF\reaction_diffusion_repo\rd_existing_mesh\data\visualize.json', "w") as outfile:
+json_object = json.dumps(results, indent=4)
+with open(r'C:\Users\Prinz\Desktop\Projects\ISF\reaction_diffusion_repo\rd_existing_mesh\data\results.json', "w") as outfile:
     outfile.write(json_object)
 outfile.close()
 
