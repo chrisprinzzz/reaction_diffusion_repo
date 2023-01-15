@@ -43,66 +43,51 @@ f = open(r'C:\Users\Prinz\Desktop\Projects\ISF\reaction_diffusion_repo\rd_existi
 # returns JSON object as a dictionary
 data = json.load(f)
 
-# get pts
-pts = []
-for i in data['mesh_verticies']:
-    #access pt attributes via 0,1,2 (X,Y,Z)
-    X = i['pt']['X']
-    Y = i['pt']['Y']
-    Z = i['pt']['Z']
-    pt = [X, Y, Z]
-    pts.append(pt)
+#get the number mesh verticies
+vertex_count = len(data['convolution_indices'])
 
 # get laplace function order 
-laplace_indices = []
-for i in data['laplace_indices']:
-    laplace_indices.append(i)
-
-# get vertex neighbors
-neighbors = []
-for i in data['vertex_neighbors']:
-    neighbors.extend([i])
+conv_groups = []
+for i in data['convolution_indices']:
+    conv_groups.extend([i])
 
 # get seed pts numbers
-s = []
-for i in data['seed_pts']:
-    s.append(i)
+seed_indices = []
+for i in data['seed_indices']:
+    seed_indices.append(i)
 
 # Close file
 f.close()
 
 # check imported data
-assert len(laplace_indices) == len(pts), "laplace and pts lists are different lengths"
-assert len(neighbors) == len(laplace_indices), "vertex neighbors and pts list are diff lengths"
-assert len(s) == len(data['seed_pts'])
+assert len(conv_groups) == vertex_count, "convolution groups don't match vertex count"
+assert len(seed_indices) == len(data['seed_indices']), "seed not imported correctly"
 
-################################################################################
+# ################################################################################
 # initialize A/B values
-meshA = populateList(len(pts),1)
-nextA = populateList(len(pts),1)
-visA = populateList(len(pts),1)
-initialA = populateList(len(pts),42)     
-meshB = populateList(len(pts),0)
-nextB = populateList(len(pts),0)
-visB = populateList(len(pts),0)   
-initialB = populateList(len(pts),42)
+meshA = populateList(vertex_count,1)
+nextA = populateList(vertex_count,1)
+visA = populateList(vertex_count,1)    
+meshB = populateList(vertex_count,0)
+nextB = populateList(vertex_count,0)
+visB = populateList(vertex_count,0)   
 
 # plant B seed 
-for i in s:
+for i in seed_indices:
     meshB[i] = 1
     nextB[i] = 1
 
 visualize = {}
-visualize['seed'] = copy.deepcopy(nextB)
+visualize['seed'] = nextB[:]    #debug seed
 
-################################################################################
+# ################################################################################
 # Main Loop
 count = 0
 jcount = 0
 for i in range(100):
     #for j in range(len(laplace_indices)):
-    for j in laplace_indices:
-        v_neighbors = neighbors[j]    #neighbors for laplace
+    for j in range(vertex_count):
+        v_neighbors = conv_groups[j]    #neighbors for laplace
         a = meshA[j]
         b = meshB[j]
 
@@ -114,12 +99,11 @@ for i in range(100):
         visB[j] = round(nextB[j], 2)  
 
         # Loop debugger
-        if i == 9:
+        # if i == 9:
             # print(j, ':', v_neighbors, ':', a , ':', b)
             # print('LA:', round(mesh_laplaceA(j, v_neighbors),2))
             # print('LB:', round(mesh_laplaceB(j, v_neighbors),2))
-            initialA[j] = a
-            initialB[j] = b
+
         jcount += 1
     count += 1
     print(count)
@@ -136,12 +120,10 @@ print(count)
 print(jcount)
 print('done calculating')
 
-################################################################################
+# ################################################################################
 
 visualize['visA'] = visA
 visualize['visB'] = visB
-visualize['initialA'] = initialA
-visualize['initialB'] = initialB
 
 results = []
 for i in range(len(nextA)):
