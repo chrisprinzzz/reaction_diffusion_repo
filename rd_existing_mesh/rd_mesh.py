@@ -81,7 +81,7 @@ for i in seed_indices:
 # Main Loop
 count = 0
 jcount = 0
-for i in range(10):
+for i in range(500):
     #for j in range(len(laplace_indices)):
     for j in range(vertex_count):
         v_neighbors = conv_groups[j]    #neighbors for laplace
